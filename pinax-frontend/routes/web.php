@@ -132,7 +132,6 @@ Route::middleware(EnsurePinaxAuthenticated::class)->group(function () {
     )
         ->whereNumber('codPeople')
         ->name('personas.toggle-status');
-
     /*
     |--------------------------------------------------------------------------
     | Asientos contables
