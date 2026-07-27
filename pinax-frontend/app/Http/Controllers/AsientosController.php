@@ -7,6 +7,7 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use Throwable;
 
 class AsientosController extends Controller
@@ -158,7 +159,7 @@ class AsientosController extends Controller
     /**
      * Muestra un asiento (incluye detalle) consultando la API.
      */
-    public function show(int $cod_asiento, PinaxApiService $pinaxApi): View
+    public function show(int $cod_asiento, PinaxApiService $pinaxApi): View|RedirectResponse
     {
         $response = $pinaxApi->get('/asientos', [
             'cod_asiento' => $cod_asiento,
@@ -189,7 +190,7 @@ class AsientosController extends Controller
     /**
      * Muestra el formulario de edición con datos del asiento.
      */
-    public function edit(int $cod_asiento, PinaxApiService $pinaxApi): View
+    public function edit(int $cod_asiento, PinaxApiService $pinaxApi): View|RedirectResponse
     {
         $response = $pinaxApi->get('/asientos', ['cod_asiento' => $cod_asiento, 'incluir_detalle' => true]);
 
