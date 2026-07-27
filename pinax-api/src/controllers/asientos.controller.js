@@ -67,6 +67,64 @@ const convertirBooleanoConsulta = (valor) => {
     return null;
 };
 
+/*
+    Obtiene el siguiente número visible de asiento para un año.
+    El sufijo se calcula sobre num_asiento para mantener una secuencia
+    independiente por año, incluso cuando cod_asiento es autoincremental.
+*/
+const obtenerSiguienteNumeroAsiento = async (connection, anio) => {
+    const [resultado] = await connection.query(
+        `SELECT COALESCE(MAX(CAST(SUBSTRING_INDEX(num_asiento, '-', -1) AS UNSIGNED)), 0) + 1 AS cod_asiento
+         FROM ga_asiento_contable
+         WHERE UPPER(num_asiento) REGEXP ?`,
+        [`^ASI-${anio}-[0-9]{4}$`]
+    );
+
+    const codAsiento = Number(resultado[0]?.cod_asiento || 1);
+
+    return {
+        correlativo: codAsiento,
+        numAsiento: `ASI-${anio}-${String(codAsiento).padStart(4, '0')}`
+    };
+};
+
+/*
+    Devuelve la previsualización del siguiente número para un año.
+*/
+const obtenerSiguienteNumeroAsientoController = async (req, res) => {
+    let connection;
+
+    try {
+        const anio = limpiarTexto(req.query.anio);
+
+        if (!anio || !/^\d{4}$/.test(anio) || Number(anio) < 1) {
+            return res.status(400).json({
+                estado: 'error',
+                mensaje: 'El parámetro anio debe contener un año válido de cuatro dígitos'
+            });
+        }
+
+        connection = await pool.getConnection();
+        const siguiente = await obtenerSiguienteNumeroAsiento(connection, anio);
+
+        return res.json({
+            estado: 'ok',
+            num_asiento: siguiente.numAsiento,
+            correlativo: siguiente.correlativo,
+            anio: Number(anio)
+        });
+    } catch (error) {
+        console.error('Error al obtener el siguiente número de asiento:', error);
+
+        return res.status(500).json({
+            estado: 'error',
+            mensaje: 'Error interno al obtener el siguiente número de asiento'
+        });
+    } finally {
+        if (connection) connection.release();
+    }
+};
+
 
 /*
     Funcion auxiliar: esNumero
@@ -319,7 +377,7 @@ const crearAsiento = async (req, res) => {
         // Capturamos los datos enviados en el body de la peticion.
         const bodyData = req.body || {};
 
-        const numAsiento = limpiarTexto(bodyData.num_asiento);
+        let numAsiento;
         const codPeriodo = bodyData.cod_periodo;
         const codUser = bodyData.cod_user;
         const fecAsiento = limpiarTexto(bodyData.fec_asiento);
@@ -333,7 +391,6 @@ const crearAsiento = async (req, res) => {
 
         // Validamos campos obligatorios de cabecera.
         if (
-            !numAsiento ||
             codPeriodo === undefined ||
             codUser === undefined ||
             !fecAsiento ||
@@ -538,6 +595,11 @@ const crearAsiento = async (req, res) => {
                 mensaje: 'El periodo contable indicado no existe'
             });
         }
+
+        // El número visible se genera en el backend y no se confía en el valor del formulario.
+        const anioAsiento = new Date(`${fecAsiento}T00:00:00Z`).getUTCFullYear();
+        const siguienteNumero = await obtenerSiguienteNumeroAsiento(connection, anioAsiento);
+        numAsiento = siguienteNumero.numAsiento;
 
         // Validamos que no exista otro asiento con el mismo numero.
         const [asientoDuplicado] = await connection.query(
@@ -1022,6 +1084,7 @@ const actualizarAsiento = async (req, res) => {
 // Exportamos los metodos del controlador de asientos.
 module.exports = {
     obtenerAsientos,
+    obtenerSiguienteNumeroAsiento: obtenerSiguienteNumeroAsientoController,
     crearAsiento,
     actualizarAsiento
 };

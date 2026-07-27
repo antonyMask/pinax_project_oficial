@@ -3,6 +3,7 @@ const express = require('express');
 // Importamos el metodo GET del controlador de asientos.
 const {
     obtenerAsientos,
+      obtenerSiguienteNumeroAsiento,
     crearAsiento,
     actualizarAsiento
 } = require('../controllers/asientos.controller');
@@ -16,6 +17,12 @@ const router = express.Router();
    - permite incluir detalle cuando se envia cod_asiento.
 */
 router.get('/', obtenerAsientos);
+
+/* Ruta: GET /api/asientos/siguiente?anio=2026
+   Funcion:
+   - devuelve la previsualización del siguiente número anual.
+*/
+router.get('/siguiente', obtenerSiguienteNumeroAsiento);
 
 /* Ruta: POST /api/asientos
    Funcion:

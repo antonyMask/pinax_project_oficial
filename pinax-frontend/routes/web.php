@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AsientosController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\DashboardController;
@@ -131,6 +132,47 @@ Route::middleware(EnsurePinaxAuthenticated::class)->group(function () {
     )
         ->whereNumber('codPeople')
         ->name('personas.toggle-status');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Asientos contables
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/asientos', [AsientosController::class, 'index'])
+        ->name('asientos.index');
+
+    // Formulario para crear un nuevo asiento
+    Route::get('/asientos/crear', [AsientosController::class, 'create'])
+        ->name('asientos.create');
+
+    // Obtener la previsualización del siguiente número de asiento
+    Route::get('/asientos/siguiente-numero', [AsientosController::class, 'nextNumber'])
+        ->name('asientos.next-number');
+
+    // Enviar nuevo asiento a la API
+    Route::post('/asientos', [AsientosController::class, 'store'])
+        ->name('asientos.store');
+
+    // Mostrar detalle de un asiento (incluye detalle)
+    Route::get('/asientos/{cod_asiento}', [AsientosController::class, 'show'])
+        ->whereNumber('cod_asiento')
+        ->name('asientos.show');
+
+    // Formulario para editar un asiento existente
+    Route::get('/asientos/{cod_asiento}/editar', [AsientosController::class, 'edit'])
+        ->whereNumber('cod_asiento')
+        ->name('asientos.edit');
+
+    // Actualizar un asiento existente
+    Route::put('/asientos/{cod_asiento}', [AsientosController::class, 'update'])
+        ->whereNumber('cod_asiento')
+        ->name('asientos.update');
+
+    // Anular (soft delete) un asiento
+    Route::delete('/asientos/{cod_asiento}', [AsientosController::class, 'destroy'])
+        ->whereNumber('cod_asiento')
+        ->name('asientos.destroy');
 
     /*
     |--------------------------------------------------------------------------

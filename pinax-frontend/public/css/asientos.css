@@ -1,0 +1,435 @@
+/*
+|--------------------------------------------------------------------------
+| Asientos contables
+|--------------------------------------------------------------------------
+| Estilos visuales del módulo inspirados en el lenguaje de diseño del
+| libro mayor digital de CT & Mayorización, sin alterar la lógica ni
+| los eventos del módulo.
+*/
+
+.asientos-alert {
+    margin-bottom: 22px;
+    border: 0;
+    border-radius: 16px;
+    box-shadow: 0 14px 30px rgba(13, 20, 46, 0.08);
+}
+
+.asientos-hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 290px;
+    margin-bottom: 24px;
+    padding: 36px 40px;
+    overflow: hidden;
+    color: #f5f7ff;
+    background:
+        linear-gradient(rgba(93, 241, 255, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(93, 241, 255, 0.045) 1px, transparent 1px),
+        radial-gradient(circle at 84% 18%, rgba(73, 161, 255, 0.22), transparent 24%),
+        radial-gradient(circle at 56% 112%, rgba(176, 36, 203, 0.22), transparent 34%),
+        linear-gradient(125deg, #040617 0%, #0d143f 46%, #161553 100%);
+    background-size: 34px 34px, 34px 34px, auto, auto, auto;
+    border: 1px solid rgba(93, 241, 255, 0.16);
+    border-radius: 24px;
+    box-shadow: 0 24px 55px rgba(5, 7, 30, 0.2);
+}
+
+.asientos-hero::after {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 46%;
+    height: 4px;
+    content: "";
+    background: linear-gradient(90deg, transparent, #56e8ff);
+}
+
+.asientos-hero__content {
+    position: relative;
+    z-index: 2;
+    align-self: center;
+    max-width: 700px;
+}
+
+.asientos-hero__eyebrow,
+.asientos-panel__eyebrow {
+    display: inline-block;
+    color: #56e8ff;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+.asientos-hero h1 {
+    margin: 10px 0 14px;
+    font-family: Bahnschrift, "Segoe UI", sans-serif;
+    font-size: clamp(2.2rem, 3.8vw, 3.4rem);
+    font-weight: 700;
+    line-height: 0.98;
+    letter-spacing: -0.04em;
+    color: #ffffff;
+}
+
+.asientos-hero p {
+    max-width: 640px;
+    margin-bottom: 22px;
+    color: #cfd6eb;
+    font-size: 1rem;
+    line-height: 1.68;
+}
+
+.asientos-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+
+.asientos-hero__action {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    color: #ffffff;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+    background: linear-gradient(90deg, #3c8dff, #6d67ff);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+    box-shadow: 0 12px 28px rgba(69, 107, 255, 0.3);
+    transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.asientos-hero__action:hover {
+    color: #ffffff;
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 16px 34px rgba(69, 107, 255, 0.35);
+}
+
+.asientos-hero__hint {
+    color: #94a0c4;
+    font-size: 0.92rem;
+}
+
+.asientos-metrics {
+    margin-bottom: 22px;
+}
+
+.asientos-metrics > div {
+    margin-bottom: 14px;
+}
+
+.asientos-metric {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    height: 100%;
+    min-height: 122px;
+    padding: 20px 20px 20px 18px;
+    background: #ffffff;
+    border: 1px solid #e7ebf4;
+    border-left-width: 4px;
+    border-radius: 18px;
+    box-shadow: 0 12px 28px rgba(16, 29, 72, 0.06);
+    transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.asientos-metric:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 18px 36px rgba(16, 29, 72, 0.10);
+}
+
+.asientos-metric--total {
+    border-left-color: #3f8efc;
+}
+
+.asientos-metric--approved {
+    border-left-color: #2fb779;
+}
+
+.asientos-metric--draft {
+    border-left-color: #f2ae31;
+}
+
+.asientos-metric--cancelled {
+    border-left-color: #ef4d57;
+}
+
+.asientos-metric__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 1rem;
+}
+
+.asientos-metric--total .asientos-metric__icon {
+    background: linear-gradient(135deg, #3f8efc, #6d67ff);
+}
+
+.asientos-metric--approved .asientos-metric__icon {
+    background: linear-gradient(135deg, #2fb779, #4fd58a);
+}
+
+.asientos-metric--draft .asientos-metric__icon {
+    background: linear-gradient(135deg, #f2ae31, #f8c85d);
+}
+
+.asientos-metric--cancelled .asientos-metric__icon {
+    background: linear-gradient(135deg, #ef4d57, #ff7b6e);
+}
+
+.asientos-metric__label {
+    display: block;
+    margin-bottom: 4px;
+    color: #5f6f90;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+}
+
+.asientos-metric strong {
+    display: block;
+    color: #102042;
+    font-size: 1.35rem;
+    font-weight: 700;
+}
+
+.asientos-metric small {
+    color: #8c96b4;
+}
+
+.asientos-panel {
+    margin-bottom: 22px;
+    padding: 22px 24px;
+    background: #ffffff;
+    border: 1px solid #e8edf6;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(16, 29, 72, 0.05);
+}
+
+.asientos-panel__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+}
+
+.asientos-panel__header--table {
+    padding: 0 2px 14px;
+    border-bottom: 1px solid #edf2f8;
+}
+
+.asientos-panel__title {
+    margin: 6px 0 0;
+    color: #1c2d5b;
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+
+.asientos-form__label {
+    display: block;
+    margin-bottom: 7px;
+    color: #51607d;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.asientos-filter-control {
+    height: 46px;
+    padding: 0 14px;
+    color: #1b2744;
+    background: #f7f9fc;
+    border: 1px solid #dfe7f2;
+    border-radius: 999px;
+    box-shadow: inset 0 1px 2px rgba(15, 25, 56, 0.02);
+}
+
+.asientos-filter-control:focus {
+    border-color: #5d7dff;
+    box-shadow: 0 0 0 0.2rem rgba(93, 125, 255, 0.15);
+}
+
+.asientos-panel__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.asientos-filter-btn,
+.asientos-clear-btn {
+    border-radius: 999px;
+    padding: 9px 14px;
+}
+
+.asientos-filter-btn {
+    background: linear-gradient(90deg, #3c8dff, #6d67ff);
+    border: 0;
+}
+
+.asientos-clear-btn {
+    background: #f5f7fb;
+    border-color: #dce4f2;
+    color: #51607d;
+}
+
+.asientos-table__counter {
+    color: #5a6b8f;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.asientos-table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.asientos-table thead th {
+    padding: 14px 16px;
+    color: #4f5f7d;
+    font-size: 0.77rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: #f4f7fd;
+    border-bottom: 1px solid #e7ecf5;
+}
+
+.asientos-table tbody td {
+    padding: 14px 16px;
+    color: #27415f;
+    border-bottom: 1px solid #f0f4fb;
+    vertical-align: middle;
+}
+
+.asientos-table tbody tr:hover {
+    background: #f8fbff;
+}
+
+.asientos-table__subtext {
+    color: #7890b0;
+    font-size: 0.82rem;
+}
+
+.asientos-badge,
+.asientos-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.asientos-badge--approved {
+    color: #198754;
+    background: #ebfff5;
+}
+
+.asientos-badge--draft {
+    color: #b86d00;
+    background: #fff8e5;
+}
+
+.asientos-badge--cancelled {
+    color: #d92f3e;
+    background: #fff0f2;
+}
+
+.asientos-badge--neutral {
+    color: #51607d;
+    background: #eef2f7;
+}
+
+.asientos-pill {
+    color: #5c6d8a;
+    background: #f2f5fb;
+}
+
+.asientos-pill--user {
+    color: #3f5fc8;
+    background: #eef4ff;
+}
+
+.asientos-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    margin: 0 2px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    color: #ffffff;
+    transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.asientos-action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(15, 25, 56, 0.12);
+}
+
+.asientos-action-btn--view {
+    background: #3f8efc;
+}
+
+.asientos-action-btn--edit {
+    background: #f2ae31;
+}
+
+.asientos-action-btn--delete {
+    background: #ef4d57;
+}
+
+@media (max-width: 991px) {
+    .asientos-hero {
+        grid-template-columns: 1fr;
+    }
+
+    .asientos-hero__widget {
+        justify-self: start;
+    }
+}
+
+@media (max-width: 767px) {
+    .asientos-hero {
+        padding: 26px 22px;
+    }
+
+    .asientos-panel {
+        padding: 18px;
+    }
+
+    .asientos-table thead {
+        display: none;
+    }
+
+    .asientos-table tbody td {
+        display: block;
+        padding: 10px 14px;
+        border-bottom: 0;
+    }
+
+    .asientos-table tbody tr {
+        display: block;
+        margin-bottom: 12px;
+        border: 1px solid #eef2f8;
+        border-radius: 14px;
+    }
+}

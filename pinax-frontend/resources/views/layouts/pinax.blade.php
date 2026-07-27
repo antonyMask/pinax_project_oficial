@@ -92,10 +92,9 @@
         </li>
 
         <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a href="{{ route('asientos.index') }}" class="nav-link {{ request()->routeIs('asientos.*') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-file-invoice"></i>
                 <p>Asientos contables</p>
-                <span class="badge badge-info right">Próximo</span>
             </a>
         </li>
 
