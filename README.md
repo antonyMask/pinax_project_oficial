@@ -24,6 +24,13 @@ pinax_project/
 ├── pinax-frontend/   Frontend Laravel con AdminLTE
 └── README.md
 ```
+## Estrategia de ramas
+
+| Rama | Propósito | Estado |
+|---|---|---|
+| `main` | Versión oficial, estable e integrada del sistema Pinax. Todo cambio validado debe llegar aquí. | Activa |
+| `integration/asientos-clean` | Respaldo de la integración limpia del módulo de Asientos Contables, ya validada e integrada en `main`. | Respaldo temporal |
+| `agent/reproducible-team-setup` | Rama histórica usada para preparar una instalación reproducible del proyecto. Contiene una implementación anterior de Asientos; no debe usarse como base de trabajo. | Histórica / no usar para nuevas funciones |
 
 ## Requisitos
 
