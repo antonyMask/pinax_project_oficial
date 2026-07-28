@@ -1,0 +1,1385 @@
+/* Define la tipografía base y los colores particulares del módulo. */
+.catalogo-module {
+    --catalogo-blue: var(--pinax-blue, #1a99f7);
+    --catalogo-cyan: var(--pinax-cyan, #55dcff);
+    --catalogo-violet: var(--pinax-violet, #6948e8);
+    --catalogo-magenta: var(--pinax-magenta, #b024cb);
+    --catalogo-border: var(--pinax-border, #e6e9f2);
+    --catalogo-shadow:
+        var(--pinax-shadow, 0 14px 35px rgba(20, 28, 72, 0.08));
+
+    color: #20243a;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* Hace que los controles hereden la fuente principal del módulo. */
+.catalogo-module button,
+.catalogo-module input,
+.catalogo-module select {
+    font-family: inherit;
+}
+
+/* Contenedor moderno para mensajes de éxito y errores de la API. */
+.catalogo-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+    margin-top: 80px;
+    margin-bottom: 22px;
+    padding: 15px 18px;
+    border: 0;
+    border-radius: 15px;
+    box-shadow: var(--catalogo-shadow);
+}
+
+/* Presentación del ícono principal del mensaje. */
+.catalogo-alert__icon {
+    display: grid;
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    place-items: center;
+}
+
+/* Evita márgenes heredados de los títulos de AdminLTE. */
+.catalogo-alert h5 {
+    margin: 0 0 3px;
+    font-size: 0.94rem;
+    font-weight: 700;
+}
+
+/* Variante utilizada para operaciones completadas. */
+.catalogo-alert--success {
+    color: #146447;
+    background: #ecfbf4;
+    border-left: 4px solid #2eae79;
+}
+
+/* Ícono correspondiente al mensaje satisfactorio. */
+.catalogo-alert--success .catalogo-alert__icon {
+    color: #198754;
+    background: #d8f5e8;
+}
+
+/* Variante utilizada para errores de conexión o validación general. */
+.catalogo-alert--danger {
+    color: #873342;
+    background: #fff2f4;
+    border-left: 4px solid #e05263;
+}
+
+/* Ícono correspondiente al mensaje de error. */
+.catalogo-alert--danger .catalogo-alert__icon {
+    color: #ca354a;
+    background: #ffe0e5;
+}
+
+
+/* Encabezado inspirado en los banners de Asientos y Mayorización. */
+.catalogo-hero {
+    position: relative;
+    display: grid;
+    min-height: 290px;
+    margin-bottom: 24px;
+    padding: 40px 46px;
+    overflow: hidden;
+    color: #f5f7ff;
+    background:
+        linear-gradient(
+            rgba(85, 220, 255, 0.055) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(85, 220, 255, 0.045) 1px,
+            transparent 1px
+        ),
+        radial-gradient(
+            circle at 84% 18%,
+            rgba(85, 220, 255, 0.2),
+            transparent 25%
+        ),
+        radial-gradient(
+            circle at 58% 112%,
+            rgba(176, 36, 203, 0.22),
+            transparent 35%
+        ),
+        linear-gradient(
+            125deg,
+            #040617 0%,
+            #0c1137 50%,
+            #171354 100%
+        );
+    background-size: 38px 38px, 38px 38px, auto, auto, auto;
+    border: 1px solid rgba(85, 220, 255, 0.17);
+    border-radius: 22px;
+    box-shadow: 0 24px 55px rgba(5, 7, 30, 0.2);
+    grid-template-columns: minmax(0, 1fr) 330px;
+}
+
+/* Línea luminosa inferior que identifica los banners de Pinax. */
+.catalogo-hero::after {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 46%;
+    height: 4px;
+    content: "";
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            var(--catalogo-cyan)
+        );
+}
+
+/* Mantiene el contenido encima de la ilustración y los fondos. */
+.catalogo-hero__content {
+    position: relative;
+    z-index: 2;
+    align-self: center;
+    max-width: 700px;
+}
+
+/* Etiqueta superior del banner. */
+.catalogo-hero__eyebrow,
+.catalogo-panel__eyebrow {
+    display: block;
+    color: var(--catalogo-cyan);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.17em;
+    text-transform: uppercase;
+}
+
+/* Título principal con la fuente usada en los otros módulos. */
+.catalogo-hero h1 {
+    margin: 8px 0 14px;
+    color: #ffffff;
+    font-family: Bahnschrift, "Segoe UI", sans-serif;
+    font-size: clamp(2.2rem, 4.2vw, 3.8rem);
+    font-weight: 700;
+    line-height: 0.98;
+    letter-spacing: -0.045em;
+}
+
+/* Texto descriptivo del módulo. */
+.catalogo-hero p {
+    max-width: 640px;
+    margin-bottom: 22px;
+    color: #c5cbe0;
+    font-size: 1rem;
+    line-height: 1.65;
+}
+
+/* Agrupa la acción principal y su descripción complementaria. */
+.catalogo-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Botón principal para registrar una nueva cuenta. */
+.catalogo-hero__action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 43px;
+    padding: 10px 16px;
+    color: #ffffff;
+    font-size: 0.87rem;
+    font-weight: 700;
+    text-decoration: none;
+    background:
+        linear-gradient(
+            100deg,
+            var(--catalogo-violet),
+            var(--catalogo-blue)
+        );
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+    box-shadow: 0 12px 28px rgba(69, 107, 255, 0.3);
+    transition:
+        box-shadow 180ms ease,
+        transform 180ms ease;
+}
+
+/* Retroalimentación al colocar el cursor sobre la acción. */
+.catalogo-hero__action:hover {
+    color: #ffffff;
+    text-decoration: none;
+    box-shadow: 0 16px 34px rgba(69, 107, 255, 0.36);
+    transform: translateY(-2px);
+}
+
+/* Mantiene visible el foco durante la navegación con teclado. */
+.catalogo-hero__action:focus-visible {
+    outline: 3px solid rgba(85, 220, 255, 0.4);
+    outline-offset: 3px;
+}
+
+/* Texto secundario colocado junto al botón principal. */
+.catalogo-hero__hint {
+    color: #98a2c2;
+    font-size: 0.86rem;
+}
+
+/* Representación conceptual de la estructura del catálogo. */
+.catalogo-hierarchy {
+    position: relative;
+    z-index: 1;
+    align-self: center;
+    width: 310px;
+    padding: 22px 14px;
+    justify-self: end;
+}
+
+/* Título de la ilustración decorativa. */
+.catalogo-hierarchy__title {
+    display: block;
+    margin-bottom: 17px;
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 0.67rem;
+    font-weight: 800;
+    letter-spacing: 0.19em;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+/* Contenedor del árbol de cuentas. */
+.catalogo-hierarchy__diagram {
+    position: relative;
+}
+
+/* Nodo raíz de la estructura contable. */
+.catalogo-hierarchy__root {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: max-content;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 9px 14px;
+    color: #ffffff;
+    font-size: 0.76rem;
+    font-weight: 700;
+    background: rgba(85, 220, 255, 0.12);
+    border: 1px solid rgba(85, 220, 255, 0.38);
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(85, 220, 255, 0.12);
+    backdrop-filter: blur(8px);
+}
+
+/* Línea vertical que conecta la raíz con los niveles inferiores. */
+.catalogo-hierarchy__trunk {
+    display: block;
+    width: 1px;
+    height: 26px;
+    margin: 0 auto;
+    background:
+        linear-gradient(
+            var(--catalogo-cyan),
+            rgba(85, 220, 255, 0.35)
+        );
+}
+
+/* Distribuye los tres niveles representativos del catálogo. */
+.catalogo-hierarchy__branches {
+    position: relative;
+    display: grid;
+    padding-top: 20px;
+    gap: 9px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* Línea horizontal de distribución entre los niveles. */
+.catalogo-hierarchy__branches::before {
+    position: absolute;
+    top: 0;
+    right: 16.67%;
+    left: 16.67%;
+    height: 1px;
+    content: "";
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(85, 220, 255, 0.75),
+            transparent
+        );
+}
+
+/* Cada rama posee su propio conector vertical. */
+.catalogo-hierarchy__branch {
+    position: relative;
+    padding-top: 12px;
+}
+
+/* Conecta cada nodo con la línea de distribución. */
+.catalogo-hierarchy__branch::before {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    width: 1px;
+    height: 32px;
+    content: "";
+    background: rgba(85, 220, 255, 0.5);
+}
+
+/* Apariencia de los nodos Grupo, Cuenta y Auxiliar. */
+.catalogo-hierarchy__node {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 58px;
+    padding: 8px 5px;
+    color: #d8def1;
+    font-size: 0.67rem;
+    font-weight: 700;
+    line-height: 1.25;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.055);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    backdrop-filter: blur(7px);
+}
+
+/* Separa los indicadores del resto del contenido. */
+.catalogo-metrics {
+    margin-bottom: 2px;
+}
+
+/* Mantiene espacio vertical al reorganizar las columnas de Bootstrap. */
+.catalogo-metrics > div {
+    margin-bottom: 22px;
+}
+
+/* Tarjeta base para cada indicador calculado desde la consulta actual. */
+.catalogo-metric {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 124px;
+    height: 100%;
+    padding: 20px;
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid var(--catalogo-border);
+    border-radius: 17px;
+    box-shadow: var(--catalogo-shadow);
+    transition:
+        box-shadow 180ms ease,
+        transform 180ms ease;
+}
+
+/* Línea semántica situada al lado izquierdo de cada indicador. */
+.catalogo-metric::before {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 4px;
+    content: "";
+    background: var(--catalogo-accent);
+}
+
+/* Elevación moderada al interactuar con la tarjeta. */
+.catalogo-metric:hover {
+    box-shadow: 0 18px 40px rgba(20, 28, 72, 0.13);
+    transform: translateY(-3px);
+}
+
+/* Colores del indicador de cuentas listadas. */
+.catalogo-metric--total {
+    --catalogo-accent: #1a99f7;
+    --catalogo-soft: rgba(26, 153, 247, 0.12);
+}
+
+/* Colores del indicador de cuentas activas. */
+.catalogo-metric--active {
+    --catalogo-accent: #1f9d6c;
+    --catalogo-soft: rgba(31, 157, 108, 0.12);
+}
+
+/* Colores del indicador de cuentas inactivas. */
+.catalogo-metric--inactive {
+    --catalogo-accent: #7a829b;
+    --catalogo-soft: rgba(122, 130, 155, 0.13);
+}
+
+/* Colores del indicador de cuentas que aceptan movimientos. */
+.catalogo-metric--movement {
+    --catalogo-accent: #a43ac4;
+    --catalogo-soft: rgba(164, 58, 196, 0.12);
+}
+
+/* Contenedor del ícono de cada indicador. */
+.catalogo-metric__icon {
+    display: grid;
+    flex: 0 0 50px;
+    width: 50px;
+    height: 50px;
+    margin-right: 15px;
+    color: var(--catalogo-accent);
+    font-size: 1.16rem;
+    background: var(--catalogo-soft);
+    border-radius: 14px;
+    place-items: center;
+}
+
+/* Nombre del indicador. */
+.catalogo-metric__label {
+    display: block;
+    color: #747b91;
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+/* Cifra principal con la misma fuente de Mayorización. */
+.catalogo-metric strong {
+    display: block;
+    margin: 3px 0;
+    color: #171b35;
+    font-family: Bahnschrift, "Segoe UI", sans-serif;
+    font-size: 1.8rem;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.05;
+}
+
+/* Explicación breve situada debajo de la cifra. */
+.catalogo-metric small {
+    color: #9297aa;
+    font-size: 0.77rem;
+}
+
+/* Contenedor general reutilizado para filtros y tabla. */
+.catalogo-panel {
+    margin-bottom: 24px;
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid var(--catalogo-border);
+    border-radius: 18px;
+    box-shadow: var(--catalogo-shadow);
+}
+
+/* Agrega una iluminación sutil al panel de búsqueda. */
+.catalogo-panel--filters {
+    padding: 24px 25px;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(26, 153, 247, 0.045),
+            transparent 38%
+        ),
+        #ffffff;
+    border-top: 4px solid var(--catalogo-violet);
+}
+
+/* Distribución del encabezado de cada panel. */
+.catalogo-panel__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 19px;
+}
+
+/* Encabezado del panel de tabla con separación inferior. */
+.catalogo-panel--table .catalogo-panel__header {
+    margin: 0;
+    padding: 22px 25px 18px;
+    border-bottom: 1px solid var(--catalogo-border);
+}
+
+/* Cambia el color del identificador cuando está sobre fondo claro. */
+.catalogo-panel__eyebrow {
+    margin-bottom: 5px;
+    color: var(--catalogo-violet);
+}
+
+/* Título interno de filtros y registros. */
+.catalogo-panel__title {
+    margin: 0;
+    color: #171b35;
+    font-family: Bahnschrift, "Segoe UI", sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+/* Ícono decorativo situado en el encabezado. */
+.catalogo-panel__icon {
+    display: grid;
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+    color: var(--catalogo-blue);
+    background: rgba(26, 153, 247, 0.1);
+    border-radius: 12px;
+    place-items: center;
+}
+
+/* Etiquetas de los campos de búsqueda. */
+.catalogo-form__label {
+    display: block;
+    margin-bottom: 7px;
+    color: #424960;
+    font-size: 0.79rem;
+    font-weight: 800;
+    letter-spacing: 0.055em;
+    text-transform: uppercase;
+}
+
+/* Apariencia de los campos conservando la funcionalidad de Bootstrap. */
+.catalogo-filter-control {
+    min-height: 46px;
+    padding: 10px 14px;
+    color: #282d45;
+    background-color: #f9faff;
+    border: 1px solid #dfe3ee;
+    border-radius: 11px;
+    transition:
+        background-color 160ms ease,
+        border-color 160ms ease,
+        box-shadow 160ms ease;
+}
+
+/* Estado enfocado de los controles del filtro. */
+.catalogo-filter-control:focus {
+    color: #20243a;
+    background: #ffffff;
+    border-color: rgba(26, 153, 247, 0.72);
+    box-shadow: 0 0 0 3px rgba(26, 153, 247, 0.12);
+}
+
+/* Agrupa las acciones Buscar y Limpiar. */
+.catalogo-filter-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+/* Estilo compartido por ambos botones del filtro. */
+.catalogo-filter-button,
+.catalogo-clear-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 42px;
+    padding: 9px 16px;
+    font-size: 0.83rem;
+    font-weight: 700;
+    border-radius: 10px;
+    transition:
+        box-shadow 180ms ease,
+        transform 180ms ease;
+}
+
+/* Boton de Busqueda */
+.catalogo-panel--filters button.catalogo-filter-button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    min-height: 42px !important;
+    padding: 9px 16px !important;
+    color: #ffffff !important;
+    font-size: 0.83rem !important;
+    font-weight: 700 !important;
+    background-color: #456bff !important; /* Respaldo si el gradiente falla. */
+    background-image: linear-gradient(105deg, #5b36d9, #1a99f7) !important;
+    border: 0 !important;
+    border-radius: 10px !important;
+    box-shadow: 0 10px 22px rgba(58, 94, 221, 0.21) !important;
+    cursor: pointer;
+}
+
+.catalogo-panel--filters button.catalogo-filter-button,
+.catalogo-panel--filters button.catalogo-filter-button i {
+    color: #ffffff !important;
+}
+
+.catalogo-panel--filters button.catalogo-filter-button:hover,
+.catalogo-panel--filters button.catalogo-filter-button:focus,
+.catalogo-panel--filters button.catalogo-filter-button:active {
+    color: #ffffff !important;
+    background-color: #456bff !important;
+    background-image: linear-gradient(105deg, #5b36d9, #1a99f7) !important;
+    border-color: transparent !important;
+    box-shadow: 0 13px 25px rgba(58, 94, 221, 0.30) !important;
+    transform: translateY(-2px);
+}
+
+.catalogo-panel--filters button.catalogo-filter-button:hover i,
+.catalogo-panel--filters button.catalogo-filter-button:focus i,
+.catalogo-panel--filters button.catalogo-filter-button:active i {
+    color: #ffffff !important;
+}
+
+
+/* Mantiene el texto blanco durante la interacción. */
+.catalogo-filter-button:hover {
+    color: #ffffff;
+    box-shadow: 0 13px 25px rgba(58, 94, 221, 0.26);
+    transform: translateY(-2px);
+}
+
+/* Acción secundaria para eliminar los filtros. */
+.catalogo-clear-button {
+    color: #626a82;
+    background: #f7f8fc;
+    border: 1px solid #dfe3ee;
+}
+
+/* Estado interactivo del botón secundario. */
+.catalogo-clear-button:hover {
+    color: var(--catalogo-blue);
+    text-decoration: none;
+    background: #ffffff;
+    border-color: rgba(26, 153, 247, 0.42);
+    transform: translateY(-2px);
+}
+
+/* Contador de registros obtenidos desde la API. */
+.catalogo-table__counter {
+    padding: 7px 11px;
+    color: #576079;
+    font-size: 0.76rem;
+    font-weight: 800;
+    background: #f3f5fb;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+/* Permite desplazamiento horizontal controlado en pantallas pequeñas. */
+.catalogo-panel--table .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* La tabla requiere espacio para mantener legibles sus diez columnas. */
+.catalogo-table {
+    min-width: 1240px;
+    margin-bottom: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+/* Encabezados con la misma densidad visual de Mayorización. */
+.catalogo-table thead th {
+    padding: 13px 14px;
+    color: #687087;
+    font-size: 0.69rem;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+    vertical-align: middle;
+    background: #f7f9fd;
+    border-top: 0;
+    border-bottom: 1px solid #dfe3ee;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+/* Celdas del cuerpo de la tabla. */
+.catalogo-table tbody td {
+    padding: 14px;
+    color: #343950;
+    vertical-align: middle;
+    border-top: 1px solid #edf0f6;
+}
+
+/* Transición suave del fondo de cada fila. */
+.catalogo-table tbody tr {
+    transition: background-color 160ms ease;
+}
+
+/* Facilita el seguimiento horizontal de registros extensos. */
+.catalogo-table tbody tr:hover {
+    background: #fafbff;
+}
+
+/* Código interno de la cuenta obtenido desde la base de datos. */
+.catalogo-account__id {
+    color: var(--catalogo-violet);
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 0.79rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Número contable presentado con caracteres monoespaciados. */
+.catalogo-account__number {
+    color: #1d2340;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 0.86rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Nombre principal de la cuenta. */
+.catalogo-account__name {
+    display: block;
+    max-width: 220px;
+    color: #1d2340;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+/* Información secundaria, como el nombre del tipo de cuenta. */
+.catalogo-account__meta {
+    display: block;
+    margin-top: 3px;
+    color: #7b8297;
+    font-size: 0.76rem;
+    line-height: 1.35;
+}
+
+/* Identifica visualmente el nivel jerárquico. */
+.catalogo-level {
+    display: inline-grid;
+    min-width: 31px;
+    height: 31px;
+    padding: 0 7px;
+    color: #5840bd;
+    font-family: Bahnschrift, "Segoe UI", sans-serif;
+    font-size: 0.79rem;
+    font-weight: 700;
+    background: #f0edff;
+    border-radius: 9px;
+    place-items: center;
+}
+
+/* Base compartida para estados, naturaleza y movimientos. */
+.catalogo-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: max-content;
+    padding: 6px 9px;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.035em;
+    line-height: 1;
+    border-radius: 999px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+/* Cuenta disponible para operaciones del sistema. */
+.catalogo-badge--active {
+    color: #15724d;
+    background: #e6f7ef;
+}
+
+/* Cuenta deshabilitada mediante eliminación lógica. */
+.catalogo-badge--inactive {
+    color: #687084;
+    background: #edf0f5;
+}
+
+/* Cuenta con naturaleza deudora. */
+.catalogo-badge--debit {
+    color: #1b63b8;
+    background: #eaf4ff;
+}
+
+/* Cuenta con naturaleza acreedora. */
+.catalogo-badge--credit {
+    color: #8d4fa9;
+    background: #f7ecfb;
+}
+
+/* Cuenta preparada para recibir movimientos contables. */
+.catalogo-badge--movement {
+    color: #08778f;
+    background: #e7f9fc;
+}
+
+/* Cuenta utilizada solamente para agrupar otras cuentas. */
+.catalogo-badge--grouping {
+    color: #6f7588;
+    background: #eff1f6;
+}
+
+/* Celda reservada para las acciones disponibles. */
+.catalogo-actions-cell {
+    min-width: 112px;
+    text-align: center;
+}
+
+/* Agrupa los botones sin afectar el formulario PATCH existente. */
+.catalogo-row-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+/* Elimina el margen predeterminado del formulario de cambio de estado. */
+.catalogo-row-actions form {
+    margin: 0;
+}
+
+/* Botón circular utilizado para editar o cambiar el estado. */
+.catalogo-action {
+    display: inline-grid;
+    width: 35px;
+    height: 35px;
+    margin: 0;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    cursor: pointer;
+    place-items: center;
+    transition:
+        box-shadow 160ms ease,
+        transform 160ms ease;
+}
+
+/* Acción de edición de una cuenta. */
+.catalogo-action--edit {
+    color: #9a6208;
+    background: #fff3d9;
+    border-color: #f1dfb7;
+}
+
+/* Acción para inactivar lógicamente una cuenta. */
+.catalogo-action--inactivate {
+    color: #ad3347;
+    background: #fff0f2;
+    border-color: #f3d2d8;
+}
+
+/* Acción para volver a habilitar una cuenta. */
+.catalogo-action--activate {
+    color: #16744f;
+    background: #e8f7ef;
+    border-color: #ccebdc;
+}
+
+/* Retroalimentación común de los botones de fila. */
+.catalogo-action:hover {
+    color: inherit;
+    text-decoration: none;
+    box-shadow: 0 7px 14px rgba(30, 38, 78, 0.12);
+    transform: translateY(-2px);
+}
+
+/* Foco visible para botones y enlaces operables con teclado. */
+.catalogo-action:focus-visible,
+.catalogo-filter-button:focus-visible,
+.catalogo-clear-button:focus-visible {
+    outline: 3px solid rgba(26, 153, 247, 0.3);
+    outline-offset: 2px;
+}
+
+/* Presentación utilizada cuando la consulta no contiene cuentas. */
+.catalogo-empty-state {
+    padding: 58px 20px !important;
+    color: #858ca0 !important;
+    text-align: center;
+}
+
+/* Organiza verticalmente cada elemento del estado vacío. */
+.catalogo-empty-state i,
+.catalogo-empty-state strong,
+.catalogo-empty-state span {
+    display: block;
+}
+
+/* Ícono principal del estado vacío. */
+.catalogo-empty-state i {
+    margin-bottom: 11px;
+    color: var(--catalogo-blue);
+    font-size: 2rem;
+}
+
+/* Mensaje principal del estado vacío. */
+.catalogo-empty-state strong {
+    margin-bottom: 4px;
+    color: #343950;
+    font-size: 1rem;
+}
+
+/* Explicación secundaria del estado vacío. */
+.catalogo-empty-state span {
+    font-size: 0.82rem;
+}
+
+/* Reduce la ilustración sin eliminar la firma visual en tabletas. */
+@media (max-width: 991.98px) {
+    .catalogo-hero {
+        padding: 36px 30px;
+        grid-template-columns: minmax(0, 1fr) 235px;
+    }
+
+    .catalogo-hierarchy {
+        width: 235px;
+        opacity: 0.6;
+    }
+
+    .catalogo-hierarchy__node {
+        font-size: 0.6rem;
+    }
+}
+
+/* Convierte el banner a una columna en teléfonos. */
+@media (max-width: 767.98px) {
+    .catalogo-hero {
+        min-height: auto;
+        padding: 31px 24px;
+        border-radius: 17px;
+        grid-template-columns: 1fr;
+    }
+
+    .catalogo-hero h1 {
+        font-size: 2.35rem;
+    }
+
+    /* La jerarquía permanece como marca decorativa de fondo. */
+    .catalogo-hierarchy {
+        position: absolute;
+        right: -52px;
+        bottom: 4px;
+        width: 245px;
+        opacity: 0.12;
+    }
+
+    .catalogo-panel--filters,
+    .catalogo-panel--table .catalogo-panel__header {
+        padding-right: 19px;
+        padding-left: 19px;
+    }
+
+    .catalogo-filter-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .catalogo-filter-actions > * {
+        width: 100%;
+    }
+}
+
+/* Ajustes finales para teléfonos con poco espacio horizontal. */
+@media (max-width: 575.98px) {
+    .catalogo-hero__actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .catalogo-hero__action {
+        width: 100%;
+    }
+
+    .catalogo-panel__header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .catalogo-table__counter {
+        align-self: flex-start;
+    }
+
+    .catalogo-metric {
+        min-height: 112px;
+    }
+}
+
+/* Respeta la configuración de accesibilidad del sistema operativo. */
+@media (prefers-reduced-motion: reduce) {
+    .catalogo-hero__action,
+    .catalogo-metric,
+    .catalogo-filter-button,
+    .catalogo-clear-button,
+    .catalogo-table tbody tr,
+    .catalogo-action {
+        transition: none;
+    }
+}
+
+
+/* Corrección definitiva del botón Buscar con colores directos. */
+.catalogo-panel--filters button.catalogo-filter-button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    min-height: 42px !important;
+    padding: 9px 16px !important;
+    color: #ffffff !important;
+    font-size: 0.83rem !important;
+    font-weight: 700 !important;
+    background-color: #456bff !important; /* Respaldo si el gradiente falla. */
+    background-image: linear-gradient(105deg, #5b36d9, #1a99f7) !important;
+    border: 0 !important;
+    border-radius: 10px !important;
+    box-shadow: 0 10px 22px rgba(58, 94, 221, 0.21) !important;
+    cursor: pointer;
+}
+
+/* Fuerza el color también para el icono interno. */
+.catalogo-panel--filters button.catalogo-filter-button,
+.catalogo-panel--filters button.catalogo-filter-button i {
+    color: #ffffff !important;
+}
+
+/* Evita que el botón Buscar se vuelva blanco al pasar el cursor. */
+.catalogo-panel--filters button.catalogo-filter-button:hover,
+.catalogo-panel--filters button.catalogo-filter-button:focus,
+.catalogo-panel--filters button.catalogo-filter-button:active {
+    color: #ffffff !important;
+    background-color: #456bff !important;
+    background-image: linear-gradient(105deg, #5b36d9, #1a99f7) !important;
+    border-color: transparent !important;
+    box-shadow: 0 13px 25px rgba(58, 94, 221, 0.30) !important;
+    transform: translateY(-2px);
+}
+
+/* Conserva blanco el ícono y texto internos durante la interacción. */
+.catalogo-panel--filters button.catalogo-filter-button:hover i,
+.catalogo-panel--filters button.catalogo-filter-button:focus i,
+.catalogo-panel--filters button.catalogo-filter-button:active i {
+    color: #ffffff !important;
+}
+
+
+/* Estilos del formulario registrar cuenta contable 
+   Contenedor principal de la pantalla de registro. */
+.catalogo-form-page {
+    max-width: 1180px;
+    margin: 0 auto 30px;
+}
+
+/* Encabezado visual del formulario. */
+.catalogo-form-hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    min-height: 175px;
+    margin-top: 80px;
+    margin-bottom: 24px;
+    padding: 32px 36px;
+    overflow: hidden;
+    color: #ffffff;
+    background:
+        radial-gradient(circle at 86% 18%, rgba(85, 220, 255, 0.24), transparent 24%),
+        linear-gradient(120deg, #171b35, #322269 58%, #2455a7);
+    border-radius: 20px;
+    box-shadow: 0 18px 36px rgba(25, 29, 68, 0.22);
+}
+
+/* Decoración geométrica de fondo para mantener el lenguaje del Catálogo. */
+.catalogo-form-hero::after {
+    position: absolute;
+    top: -94px;
+    right: -70px;
+    width: 270px;
+    height: 270px;
+    content: "";
+    border: 1px solid rgba(85, 220, 255, 0.25);
+    border-radius: 50%;
+    box-shadow:
+        0 0 0 28px rgba(85, 220, 255, 0.05),
+        0 0 0 56px rgba(85, 220, 255, 0.035);
+}
+
+/* Mantiene el contenido del encabezado por encima de la decoración. */
+.catalogo-form-hero__content,
+.catalogo-form-hero__back {
+    position: relative;
+    z-index: 1;
+}
+
+/* Texto identificador superior. */
+.catalogo-form-hero__eyebrow {
+    display: block;
+    margin-bottom: 8px;
+    color: #55dcff;
+    font-size: 0.73rem;
+    font-weight: 800;
+    letter-spacing: 0.11em;
+}
+
+/* Título principal del formulario. */
+.catalogo-form-hero h1 {
+    margin: 0 0 9px;
+    color: #ffffff;
+    font-family: Bahnschrift, "Segoe UI", sans-serif;
+    font-size: clamp(1.85rem, 3vw, 2.45rem);
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+/* Descripción breve para orientar el registro. */
+.catalogo-form-hero p {
+    max-width: 630px;
+    margin: 0;
+    color: rgba(235, 241, 255, 0.82);
+    font-size: 0.93rem;
+    line-height: 1.6;
+}
+
+/* Botón para volver sin usar el aspecto genérico de AdminLTE. */
+.catalogo-form-hero__back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 42px;
+    padding: 10px 15px;
+    color: #ffffff !important;
+    font-size: 0.82rem;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 10px;
+    text-decoration: none;
+    transition: background-color 160ms ease, transform 160ms ease;
+}
+
+/* Interacción ligera, sin convertir el botón en blanco. */
+.catalogo-form-hero__back:hover,
+.catalogo-form-hero__back:focus {
+    color: #ffffff !important;
+    background: rgba(85, 220, 255, 0.19);
+    text-decoration: none;
+    transform: translateY(-2px);
+}
+
+/* Tarjeta que contiene el formulario. */
+.catalogo-form-card {
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid #e1e5ef;
+    border-radius: 18px;
+    box-shadow: 0 14px 32px rgba(24, 31, 68, 0.09);
+}
+
+/* Encabezado interno de cada bloque de datos. */
+.catalogo-form-section {
+    padding: 27px 28px;
+    border-bottom: 1px solid #edf0f6;
+}
+
+/* Evita un borde innecesario en el último bloque. */
+.catalogo-form-section:last-of-type {
+    border-bottom: 0;
+}
+
+/* Organiza icono y textos de cada sección. */
+.catalogo-form-section__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 23px;
+}
+
+/* Fondo para el icono de cada grupo de campos. */
+.catalogo-form-section__icon {
+    display: grid;
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+    color: #3a5edd;
+    background: rgba(58, 94, 221, 0.1);
+    border-radius: 12px;
+    place-items: center;
+}
+
+/* Nombre de la sección. */
+.catalogo-form-section__title {
+    margin: 0;
+    color: #1b203b;
+    font-family: Bahnschrift, "Segoe UI", sans-serif;
+    font-size: 1.12rem;
+    font-weight: 700;
+}
+
+/* Explicación corta de cada conjunto de campos. */
+.catalogo-form-section__description {
+    display: block;
+    margin-top: 3px;
+    color: #7a8195;
+    font-size: 0.8rem;
+}
+
+/* Etiquetas consistentes con el estilo del listado. */
+.catalogo-form-label {
+    display: block;
+    margin-bottom: 7px;
+    color: #41485f;
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.055em;
+    text-transform: uppercase;
+}
+
+/* Campos de texto, número, selección y descripción. */
+.catalogo-form-control {
+    min-height: 46px;
+    padding: 10px 13px;
+    color: #282d45;
+    background: #f9faff;
+    border: 1px solid #dfe3ee;
+    border-radius: 10px;
+    transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+/* Área de texto ligeramente más alta. */
+textarea.catalogo-form-control {
+    min-height: 84px;
+    resize: vertical;
+}
+
+/* Estado de enfoque claro y accesible. */
+.catalogo-form-control:focus {
+    color: #20243a;
+    background: #ffffff;
+    border-color: #1a99f7;
+    box-shadow: 0 0 0 3px rgba(26, 153, 247, 0.12);
+}
+
+/* Conserva la señal visual de los campos inválidos de Laravel. */
+.catalogo-form-control.is-invalid {
+    border-color: #d94c5f;
+    background-image: none;
+}
+
+/* Texto de ayuda ubicado bajo un campo. */
+.catalogo-form-help {
+    display: block;
+    margin-top: 7px;
+    color: #7e8599;
+    font-size: 0.77rem;
+    line-height: 1.45;
+}
+
+/* Destaca el valor especial 0 sin depender de etiquetas HTML antiguas. */
+.catalogo-form-help strong {
+    color: #3a5edd;
+}
+
+/* Pie del formulario con sus acciones. */
+.catalogo-form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 20px 28px;
+    background: #fafbfe;
+    border-top: 1px solid #edf0f6;
+}
+
+/* Agrupa los botones principales. */
+.catalogo-form-actions__group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* Botón principal para registrar la cuenta. */
+.catalogo-submit-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 43px;
+    padding: 10px 17px;
+    color: #ffffff !important;
+    font-size: 0.83rem;
+    font-weight: 700;
+    background-color: #456bff !important;
+    background-image: linear-gradient(105deg, #5b36d9, #1a99f7) !important;
+    border: 0 !important;
+    border-radius: 10px;
+    box-shadow: 0 10px 22px rgba(58, 94, 221, 0.21);
+    cursor: pointer;
+    transition: box-shadow 180ms ease, transform 180ms ease;
+}
+
+/* Mantiene el color al interactuar, igual que corregimos en Buscar. */
+.catalogo-submit-button:hover,
+.catalogo-submit-button:focus,
+.catalogo-submit-button:active {
+    color: #ffffff !important;
+    background-color: #456bff !important;
+    background-image: linear-gradient(105deg, #5b36d9, #1a99f7) !important;
+    box-shadow: 0 13px 25px rgba(58, 94, 221, 0.3) !important;
+    transform: translateY(-2px);
+}
+
+/* Garantiza color blanco para el icono interno. */
+.catalogo-submit-button i {
+    color: #ffffff !important;
+}
+
+/* Acción secundaria para cancelar el registro. */
+.catalogo-cancel-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 43px;
+    padding: 10px 16px;
+    color: #626a82;
+    font-size: 0.83rem;
+    font-weight: 700;
+    background: #ffffff;
+    border: 1px solid #dfe3ee;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: border-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+/* Interacción secundaria sin cambios bruscos de color. */
+.catalogo-cancel-button:hover,
+.catalogo-cancel-button:focus {
+    color: #1a99f7;
+    border-color: rgba(26, 153, 247, 0.45);
+    text-decoration: none;
+    transform: translateY(-2px);
+}
+
+/* Adapta el formulario a teléfonos y pantallas angostas. */
+@media (max-width: 767.98px) {
+    .catalogo-form-hero {
+        align-items: flex-start;
+        flex-direction: column;
+        min-height: auto;
+        padding: 28px 23px;
+    }
+
+    .catalogo-form-hero__back {
+        width: 100%;
+    }
+
+    .catalogo-form-section,
+    .catalogo-form-actions {
+        padding-right: 19px;
+        padding-left: 19px;
+    }
+
+    .catalogo-form-actions,
+    .catalogo-form-actions__group {
+        align-items: stretch;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .catalogo-submit-button,
+    .catalogo-cancel-button {
+        width: 100%;
+    }
+}

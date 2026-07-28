@@ -29,11 +29,13 @@ body {
 /* Fondo general del contenido. */
 .pinax-content-wrapper,
 .content-wrapper {
+    margin-left: 255px;
     background: var(--pinax-background);
 }
 
 /* Barra superior inspirada en el fondo del logo. */
 .pinax-topnav {
+    margin-left: 255px;
     background:
         linear-gradient(90deg, #050617 0%, #11143b 55%, #10104a 100%) !important;
     border-bottom: 1px solid rgba(85, 220, 255, 0.18);
@@ -42,6 +44,7 @@ body {
 /* Sidebar global de Pinax. */
 .pinax-sidebar,
 .pinax-sidebar::before {
+    width: 255px;
     background:
         linear-gradient(180deg, #050617 0%, #0b0d29 58%, #111348 100%) !important;
 }
@@ -63,6 +66,7 @@ body {
     border-radius: 9px;
 }
 
+
 .nav-sidebar .nav-link {
     margin: 3px 8px;
     border-radius: 9px;
@@ -77,6 +81,7 @@ body {
 
 .sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link.active {
     color: #fff;
+    max-width: 1000px;
     background:
         linear-gradient(90deg, var(--pinax-violet), var(--pinax-blue));
     box-shadow: 0 8px 20px rgba(26, 153, 247, 0.22);
