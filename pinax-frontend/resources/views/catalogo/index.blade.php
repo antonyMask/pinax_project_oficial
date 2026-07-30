@@ -107,10 +107,6 @@
                     <i class="fas fa-plus" aria-hidden="true"></i>
                     Nueva cuenta
                 </a>
-
-                <span class="catalogo-hero__hint">
-                    Base estructural del sistema contable
-                </span>
             </div>
         </div>
 

@@ -2,247 +2,566 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Session;
+use App\Http\Requests\IndexReporteFinancieroRequest;
+use App\Http\Requests\StoreReporteFinancieroRequest;
+use App\Http\Requests\UpdateReporteFinancieroRequest;
+use App\Services\PinaxApiService;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Log;
+use Illuminate\View\View;
+use Throwable;
 
 class ReporteFinancieroController extends Controller
 {
     /**
-     * Mostrar lista de reportes
+     * Consulta los reportes financieros y construye las métricas del listado.
+     *
+     * Laravel actúa únicamente como cliente HTTP. La lectura contable continúa
+     * siendo responsabilidad de la API y de rf_sel_modulo_reportes.
      */
-    public function index()
-    {
+    public function index(
+        IndexReporteFinancieroRequest $request,
+        PinaxApiService $pinaxApi
+    ): View {
+        // La vista siempre recibe estructuras válidas, incluso si la API falla.
+        $reportes = [];
+        $periodos = [];
+        $errorApi = null;
+        $mensajeValidacion = null;
+        $balanceValido = true;
+
+        // Solo enviamos filtros validados y con un valor útil.
+        $filtros = collect($request->validated())
+            ->reject(
+                fn (mixed $valor): bool =>
+                    $valor === null || $valor === ''
+            )
+            ->all();
+
         try {
-            $token = Session::get('access_token');
-            
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $token,
-            ])->get('http://localhost:3000/api/reportes');
+            // Consulta principal del módulo mediante el procedimiento SELECT.
+            $respuestaReportes = $pinaxApi->get('/reportes', $filtros);
 
-            $data = $response->json();
+            if ($respuestaReportes->successful()) {
+                $datos = $respuestaReportes->json('cabecera', []);
 
-            // Si la API devuelve error
-            if (isset($data['estado']) && $data['estado'] === 'error') {
-                return view('admin.reportes.index', [
-                    'reportes' => ['data' => []],
-                    'error' => $data['mensaje'] ?? 'Error al cargar reportes'
-                ]);
-            }
+                $reportes = is_array($datos)
+                    ? $datos
+                    : [];
 
-            // TRANSFORMAR LOS DATOS DE LA API AL FORMATO QUE ESPERA LA VISTA
-            if (isset($data['cabecera']) && is_array($data['cabecera'])) {
-                $reportes = [
-                    'data' => $data['cabecera'],
-                    'total_reportes' => $data['total_reportes'] ?? count($data['cabecera']),
-                    'balance_valido' => $data['balance_valido'] ?? true,
-                    'mensaje_validacion' => $data['mensaje_validacion'] ?? ''
-                ];
+                $mensajeValidacion = $respuestaReportes->json(
+                    'mensaje_validacion'
+                );
+
+                $balanceValido = (bool) $respuestaReportes->json(
+                    'balance_valido',
+                    true
+                );
             } else {
-                $reportes = [
-                    'data' => [],
-                    'total_reportes' => 0,
-                    'balance_valido' => true,
-                    'mensaje_validacion' => ''
-                ];
+                Log::warning('La API rechazó la consulta de reportes.', [
+                    'status' => $respuestaReportes->status(),
+                    'body' => $respuestaReportes->json(),
+                    'filtros' => $filtros,
+                ]);
+
+                $errorApi = $respuestaReportes->json(
+                    'mensaje',
+                    'No fue posible consultar los reportes financieros.'
+                );
             }
 
-            return view('admin.reportes.index', compact('reportes'));
-
-        } catch (\Exception $e) {
-            return view('admin.reportes.index', [
-                'reportes' => ['data' => []],
-                'error' => 'Error al conectar con la API: ' . $e->getMessage()
+            /*
+             * Mayorización ya expone los períodos mediante la API.
+             * Reutilizamos esa lectura para construir el selector sin conectar
+             * Laravel directamente a MySQL ni duplicar consultas SQL.
+             */
+            $respuestaOpciones = $pinaxApi->get('/mayorizacion', [
+                'vista' => 'opciones',
             ]);
+
+            if ($respuestaOpciones->successful()) {
+                $datosPeriodos = $respuestaOpciones->json(
+                    'datos.periodos',
+                    []
+                );
+
+                $periodos = is_array($datosPeriodos)
+                    ? $datosPeriodos
+                    : [];
+            }
+        } catch (ConnectionException $exception) {
+            Log::error('No fue posible conectar con la API de Reportes.', [
+                'mensaje' => $exception->getMessage(),
+            ]);
+
+            $errorApi = 'No fue posible conectar con la API Pinax. '
+                .'Verifica que Node.js esté ejecutándose.';
+        } catch (Throwable $exception) {
+            Log::error('Error inesperado al consultar Reportes.', [
+                'mensaje' => $exception->getMessage(),
+            ]);
+
+            $errorApi =
+                'Ocurrió un error inesperado al cargar los reportes.';
         }
-    }
 
-    /**
-     * Mostrar formulario para crear reporte
-     */
-    public function create()
-    {
-        return view('admin.reportes.create');
-    }
+        /*
+         * Si la consulta de opciones no estuvo disponible, recuperamos los
+         * períodos visibles en el listado para conservar filtros funcionales.
+         */
+        if ($periodos === []) {
+            $periodos = collect($reportes)
+                ->map(
+                    fn (array $reporte): array => [
+                        'cod_periodo' => data_get(
+                            $reporte,
+                            'cod_periodo'
+                        ),
+                        'nom_periodo' => data_get(
+                            $reporte,
+                            'nom_periodo',
+                            'Período '.data_get(
+                                $reporte,
+                                'cod_periodo'
+                            )
+                        ),
+                        'ind_estado' => null,
+                    ]
+                )
+                ->filter(
+                    fn (array $periodo): bool =>
+                        $periodo['cod_periodo'] !== null
+                )
+                ->unique('cod_periodo')
+                ->values()
+                ->all();
+        }
 
-    /**
-     * Guardar nuevo reporte
-     */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'cod_periodo' => 'required|integer',
-            'tip_reporte' => 'required|string',
-            'calcular_automaticamente' => 'required|boolean',
+        // Las métricas reflejan exactamente el conjunto filtrado en pantalla.
+        $coleccionReportes = collect($reportes);
+
+        $metricas = [
+            'total' => $coleccionReportes->count(),
+            'generados' => $coleccionReportes
+                ->where('ind_estado', 'generado')
+                ->count(),
+            'confirmados' => $coleccionReportes
+                ->where('ind_estado', 'confirmado')
+                ->count(),
+            'anulados' => $coleccionReportes
+                ->where('ind_estado', 'anulado')
+                ->count(),
+        ];
+
+        return view('admin.reportes.index', [
+            'reportes' => $reportes,
+            'periodos' => $periodos,
+            'metricas' => $metricas,
+            'errorApi' => $errorApi,
+            'mensajeValidacion' => $mensajeValidacion,
+            'balanceValido' => $balanceValido,
         ]);
+    }
+
+    /**
+     * Muestra el formulario de generación automática.
+     */
+    public function create(PinaxApiService $pinaxApi): View
+    {
+        $periodos = [];
+        $errorApi = null;
 
         try {
-            // Obtener el cod_user de la sesión
-            $codUser = session('pinax_user.cod_user') ?? session('user.cod_user') ?? 1;
-
-            if (!$codUser) {
-                $codUser = 1;
-            }
-
-            $token = Session::get('access_token');
-
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $token,
-            ])->post('http://localhost:3000/api/reportes', [
-                'cod_periodo' => (int) $request->cod_periodo,
-                'cod_user' => (int) $codUser,
-                'tip_reporte' => $request->tip_reporte,
-                'calcular_automaticamente' => (bool) $request->calcular_automaticamente,
-                'tot_activo' => $request->tot_activo ?? null,
-                'tot_pasivo' => $request->tot_pasivo ?? null,
-                'tot_patrimonio' => $request->tot_patrimonio ?? null,
-                'mon_utilidad_perdida' => $request->mon_utilidad_perdida ?? null,
+            // El usuario selecciona un período existente, nunca escribe totales.
+            $respuesta = $pinaxApi->get('/mayorizacion', [
+                'vista' => 'opciones',
             ]);
 
-            $data = $response->json();
+            if ($respuesta->successful()) {
+                $datos = $respuesta->json('datos.periodos', []);
 
-            if ($response->successful() && isset($data['estado']) && $data['estado'] === 'ok') {
-                return redirect()->route('reportes.index')
-                    ->with('success', $data['mensaje'] ?? 'Reporte creado exitosamente.');
+                $periodos = is_array($datos)
+                    ? $datos
+                    : [];
+            } else {
+                Log::warning(
+                    'La API no devolvió los períodos para Reportes.',
+                    [
+                        'status' => $respuesta->status(),
+                        'body' => $respuesta->json(),
+                    ]
+                );
+
+                $errorApi = $respuesta->json(
+                    'mensaje',
+                    'No fue posible cargar los períodos contables.'
+                );
             }
+        } catch (ConnectionException $exception) {
+            Log::error(
+                'No fue posible conectar con la API al crear un reporte.',
+                ['mensaje' => $exception->getMessage()]
+            );
 
-            return back()->with('error', $data['mensaje'] ?? 'Error al crear reporte.')
-                ->withInput();
+            $errorApi = 'No fue posible conectar con la API Pinax. '
+                .'Verifica que Node.js esté ejecutándose.';
+        } catch (Throwable $exception) {
+            Log::error(
+                'Error inesperado al cargar el formulario de Reportes.',
+                ['mensaje' => $exception->getMessage()]
+            );
 
-        } catch (\Exception $e) {
-            return back()->with('error', 'Error al conectar con la API: ' . $e->getMessage())
-                ->withInput();
+            $errorApi =
+                'Ocurrió un error inesperado al cargar los períodos.';
         }
+
+        return view('admin.reportes.create', [
+            'periodos' => $periodos,
+            'errorApi' => $errorApi,
+        ]);
     }
 
     /**
-     * Mostrar detalle de un reporte
+     * Genera un reporte con los importes calculados desde Mayorización.
      */
-    public function show($id)
-{
-    try {
-        $token = Session::get('access_token');
+    public function store(
+        StoreReporteFinancieroRequest $request,
+        PinaxApiService $pinaxApi
+    ): RedirectResponse {
+        // La identidad proviene de la sesión creada por AuthController.
+        $codUser = (int) data_get(
+            session('pinax_user', []),
+            'cod_user',
+            0
+        );
 
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $token,
-        ])->get("http://localhost:3000/api/reportes/{$id}");
-
-        $data = $response->json();
-
-        // Verificar si la API devolvió un error
-        if (isset($data['estado']) && $data['estado'] === 'error') {
-            return back()->with('error', $data['mensaje'] ?? 'Reporte no encontrado.');
+        if ($codUser <= 0) {
+            return to_route('reportes.create')
+                ->withInput()
+                ->withErrors([
+                    'api' => 'La sesión no contiene un usuario válido. '
+                        .'Cierra sesión e ingresa nuevamente.',
+                ]);
         }
 
-        // La API devuelve el reporte en 'cabecera' cuando es individual
-        if (isset($data['cod_reporte'])) {
-            $reporte = $data;
-        } elseif (isset($data['cabecera']) && is_array($data['cabecera']) && count($data['cabecera']) > 0) {
-            $reporte = $data['cabecera'][0];
-        } else {
-            $reporte = $data;
-        }
+        // Solo usamos los datos que pasaron la validación de Laravel.
+        $datos = $request->validated();
 
-        // Si $reporte es null, mostrar error
-        if (empty($reporte)) {
-            return back()->with('error', 'Reporte no encontrado.');
-        }
-
-        // Obtener detalle del reporte (opcional)
-        $detalle = [];
         try {
-            $detalleResponse = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $token,
-            ])->get("http://localhost:3000/api/reportes/{$id}/detalle");
-            $detalle = $detalleResponse->json();
-        } catch (\Exception $e) {
-            $detalle = ['total_lineas' => 0];
-        }
+            $respuesta = $pinaxApi->post('/reportes', [
+                'cod_periodo' => (int) $datos['cod_periodo'],
+                'cod_user' => $codUser,
+                'tip_reporte' => $datos['tip_reporte'],
 
-        return view('admin.reportes.show', compact('reporte', 'detalle'));
-
-    } catch (\Exception $e) {
-        return back()->with('error', 'Error al cargar el reporte: ' . $e->getMessage());
-    }
-}
-
-    /**
-     * Mostrar formulario para editar reporte
-     */
-    public function edit($id)
-    {
-        try {
-            $token = Session::get('access_token');
-
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $token,
-            ])->get("http://localhost:3000/api/reportes/{$id}");
-
-            $reporte = $response->json();
-
-            return view('admin.reportes.edit', compact('reporte'));
-        } catch (\Exception $e) {
-            return back()->with('error', 'Reporte no encontrado.');
-        }
-    }
-
-    /**
-     * Actualizar reporte
-     */
-    public function update(Request $request, $id)
-    {
-        try {
-            $token = Session::get('access_token');
-
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $token,
-            ])->put("http://localhost:3000/api/reportes/{$id}", [
-                'ind_estado' => $request->ind_estado,
-                'tot_activo' => $request->tot_activo,
-                'tot_pasivo' => $request->tot_pasivo,
-                'tot_patrimonio' => $request->tot_patrimonio,
-                'mon_utilidad_perdida' => $request->mon_utilidad_perdida,
+                /*
+                 * Los totales siempre se calculan desde Mayorización.
+                 * Los NULL preservan el contrato validado del procedimiento.
+                 */
+                'calcular_automaticamente' => true,
+                'tot_activo' => null,
+                'tot_pasivo' => null,
+                'tot_patrimonio' => null,
+                'mon_utilidad_perdida' => null,
             ]);
 
-            $data = $response->json();
+            if ($respuesta->successful()) {
+                $codReporte = (int) $respuesta->json(
+                    'cod_reporte',
+                    0
+                );
 
-            if ($response->successful() && isset($data['estado']) && $data['estado'] === 'ok') {
-                return redirect()->route('reportes.index')
-                    ->with('success', $data['mensaje'] ?? 'Reporte actualizado exitosamente.');
+                $mensaje = $respuesta->json(
+                    'mensaje',
+                    'Reporte financiero generado correctamente.'
+                );
+
+                // Mostramos inmediatamente el resultado recién generado.
+                if ($codReporte > 0) {
+                    return to_route('reportes.show', $codReporte)
+                        ->with('success', $mensaje);
+                }
+
+                return to_route('reportes.index')
+                    ->with('success', $mensaje);
             }
 
-            return back()->with('error', $data['mensaje'] ?? 'Error al actualizar reporte.')
-                ->withInput();
+            Log::warning('La API rechazó la generación del reporte.', [
+                'status' => $respuesta->status(),
+                'body' => $respuesta->json(),
+                'cod_periodo' => $datos['cod_periodo'],
+                'tip_reporte' => $datos['tip_reporte'],
+            ]);
 
-        } catch (\Exception $e) {
-            return back()->with('error', 'Error al conectar con la API: ' . $e->getMessage())
-                ->withInput();
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'api' => $respuesta->json(
+                        'mensaje',
+                        'No fue posible generar el reporte financiero.'
+                    ),
+                ]);
+        } catch (ConnectionException $exception) {
+            Log::error('No fue posible conectar al generar el reporte.', [
+                'mensaje' => $exception->getMessage(),
+            ]);
+
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'api' => 'No fue posible conectar con la API Pinax. '
+                        .'Verifica que Node.js esté ejecutándose.',
+                ]);
+        } catch (Throwable $exception) {
+            Log::error('Error inesperado al generar el reporte.', [
+                'mensaje' => $exception->getMessage(),
+            ]);
+
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'api' =>
+                        'Ocurrió un error inesperado al generar el reporte.',
+                ]);
         }
     }
 
     /**
-     * Anular reporte
+     * Muestra la cabecera y el detalle devueltos por una sola consulta del SP.
      */
-    public function destroy($id)
-    {
+    public function show(
+        PinaxApiService $pinaxApi,
+        int $id
+    ): View|RedirectResponse {
         try {
-            $token = Session::get('access_token');
+            $respuesta = $pinaxApi->get('/reportes', [
+                'cod_reporte' => $id,
+                'incluir_detalle' => true,
+            ]);
 
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $token,
-            ])->patch("http://localhost:3000/api/reportes/{$id}/estado");
+            if (!$respuesta->successful()) {
+                Log::warning('La API rechazó el detalle del reporte.', [
+                    'status' => $respuesta->status(),
+                    'body' => $respuesta->json(),
+                    'cod_reporte' => $id,
+                ]);
 
-            $data = $response->json();
-
-            if ($response->successful() && isset($data['estado']) && $data['estado'] === 'ok') {
-                return redirect()->route('reportes.index')
-                    ->with('success', 'Reporte anulado exitosamente.');
+                return to_route('reportes.index')
+                    ->withErrors([
+                        'api' => $respuesta->json(
+                            'mensaje',
+                            'No fue posible consultar el reporte solicitado.'
+                        ),
+                    ]);
             }
 
-            return back()->with('error', $data['mensaje'] ?? 'Error al anular reporte.');
+            $reporte = $respuesta->json('cabecera.0');
+            $detalle = $respuesta->json('detalle', []);
 
-        } catch (\Exception $e) {
-            return back()->with('error', 'Error al conectar con la API.');
+            if (!is_array($reporte)) {
+                return to_route('reportes.index')
+                    ->withErrors([
+                        'api' => 'El reporte solicitado no existe.',
+                    ]);
+            }
+
+            $detalle = is_array($detalle)
+                ? $detalle
+                : [];
+
+            /*
+             * Estas sumas son únicamente de presentación.
+             * La autoridad contable sigue siendo el procedimiento almacenado.
+             */
+            $totalesDetalle = collect($detalle)
+                ->groupBy('tip_grupo')
+                ->map(
+                    fn ($lineas): float => (float) $lineas->sum(
+                        fn (array $linea): float =>
+                            (float) data_get($linea, 'mon_linea', 0)
+                    )
+                )
+                ->all();
+
+            return view('admin.reportes.show', [
+                'reporte' => $reporte,
+                'detalle' => $detalle,
+                'totalesDetalle' => $totalesDetalle,
+            ]);
+        } catch (ConnectionException $exception) {
+            Log::error('No fue posible conectar al consultar el reporte.', [
+                'mensaje' => $exception->getMessage(),
+                'cod_reporte' => $id,
+            ]);
+
+            return to_route('reportes.index')
+                ->withErrors([
+                    'api' => 'No fue posible conectar con la API Pinax. '
+                        .'Verifica que Node.js esté ejecutándose.',
+                ]);
+        } catch (Throwable $exception) {
+            Log::error('Error inesperado al consultar el reporte.', [
+                'mensaje' => $exception->getMessage(),
+                'cod_reporte' => $id,
+            ]);
+
+            return to_route('reportes.index')
+                ->withErrors([
+                    'api' =>
+                        'Ocurrió un error inesperado al cargar el reporte.',
+                ]);
+        }
+    }
+
+    /**
+     * Muestra una pantalla de control de estado sin editar importes.
+     */
+    public function edit(
+        PinaxApiService $pinaxApi,
+        int $id
+    ): View|RedirectResponse {
+        try {
+            $respuesta = $pinaxApi->get('/reportes', [
+                'cod_reporte' => $id,
+            ]);
+
+            $reporte = $respuesta->successful()
+                ? $respuesta->json('cabecera.0')
+                : null;
+
+            if (!is_array($reporte)) {
+                return to_route('reportes.index')
+                    ->withErrors([
+                        'api' => 'El reporte solicitado no existe.',
+                    ]);
+            }
+
+            if (data_get($reporte, 'ind_estado') === 'anulado') {
+                return to_route('reportes.show', $id)
+                    ->withErrors([
+                        'api' =>
+                            'Un reporte anulado ya no admite cambios.',
+                    ]);
+            }
+
+            return view('admin.reportes.edit', [
+                'reporte' => $reporte,
+            ]);
+        } catch (Throwable $exception) {
+            Log::error('Error al cargar la gestión del reporte.', [
+                'mensaje' => $exception->getMessage(),
+                'cod_reporte' => $id,
+            ]);
+
+            return to_route('reportes.index')
+                ->withErrors([
+                    'api' => 'No fue posible cargar el reporte solicitado.',
+                ]);
+        }
+    }
+
+    /**
+     * Confirma o anula un reporte; nunca modifica importes financieros.
+     */
+    public function update(
+        UpdateReporteFinancieroRequest $request,
+        PinaxApiService $pinaxApi,
+        int $id
+    ): RedirectResponse {
+        $estado = (string) $request->validated('ind_estado');
+
+        return $this->cambiarEstado(
+            $pinaxApi,
+            $id,
+            $estado,
+            route('reportes.show', $id)
+        );
+    }
+
+    /**
+     * Ejecuta el soft delete mediante PUT /api/reportes/{id}.
+     */
+    public function destroy(
+        PinaxApiService $pinaxApi,
+        int $id
+    ): RedirectResponse {
+        return $this->cambiarEstado(
+            $pinaxApi,
+            $id,
+            'anulado',
+            route('reportes.index')
+        );
+    }
+
+    /**
+     * Centraliza las dos transiciones permitidas por la interfaz.
+     */
+    private function cambiarEstado(
+        PinaxApiService $pinaxApi,
+        int $id,
+        string $estado,
+        string $destino
+    ): RedirectResponse {
+        try {
+            /*
+             * El procedimiento rf_upd_modulo_reportes recibe NULL para los
+             * importes, por lo que conserva los totales previamente validados.
+             */
+            $respuesta = $pinaxApi->put("/reportes/{$id}", [
+                'ind_estado' => $estado,
+            ]);
+
+            if ($respuesta->successful()) {
+                return redirect($destino)
+                    ->with(
+                        'success',
+                        $respuesta->json(
+                            'mensaje',
+                            $estado === 'anulado'
+                                ? 'Reporte financiero anulado correctamente.'
+                                : 'Reporte financiero confirmado correctamente.'
+                        )
+                    );
+            }
+
+            Log::warning('La API rechazó el cambio de estado del reporte.', [
+                'status' => $respuesta->status(),
+                'body' => $respuesta->json(),
+                'cod_reporte' => $id,
+                'ind_estado' => $estado,
+            ]);
+
+            return back()->withErrors([
+                'api' => $respuesta->json(
+                    'mensaje',
+                    'No fue posible actualizar el estado del reporte.'
+                ),
+            ]);
+        } catch (ConnectionException $exception) {
+            Log::error(
+                'No fue posible conectar al actualizar el reporte.',
+                [
+                    'mensaje' => $exception->getMessage(),
+                    'cod_reporte' => $id,
+                    'ind_estado' => $estado,
+                ]
+            );
+
+            return back()->withErrors([
+                'api' => 'No fue posible conectar con la API Pinax. '
+                    .'Verifica que Node.js esté ejecutándose.',
+            ]);
+        } catch (Throwable $exception) {
+            Log::error('Error inesperado al actualizar el reporte.', [
+                'mensaje' => $exception->getMessage(),
+                'cod_reporte' => $id,
+                'ind_estado' => $estado,
+            ]);
+
+            return back()->withErrors([
+                'api' =>
+                    'Ocurrió un error inesperado al actualizar el reporte.',
+            ]);
         }
     }
 }

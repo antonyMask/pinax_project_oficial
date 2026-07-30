@@ -1,0 +1,207 @@
+.pinax-register-shell {
+    min-height: 690px;
+}
+
+.pinax-register-visual {
+    padding-top: 42px;
+    padding-bottom: 42px;
+}
+
+/*
+ * Firma visual del registro: una credencial compacta que comunica que el
+ * perfil se asigna automáticamente y no se elige desde el navegador.
+ */
+.pinax-register-credential {
+    position: relative;
+    z-index: 2;
+    padding: 17px 19px;
+    color: #d8dced;
+    background: rgba(12, 16, 49, 0.66);
+    border: 1px solid rgba(85, 220, 255, 0.22);
+    border-radius: 15px;
+    backdrop-filter: blur(12px);
+}
+
+.pinax-register-credential > span {
+    display: block;
+    margin-bottom: 11px;
+    color: #55dcff;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.17em;
+}
+
+.pinax-register-credential > div {
+    display: flex;
+    align-items: center;
+}
+
+.pinax-register-credential i {
+    display: grid;
+    width: 38px;
+    height: 38px;
+    margin-right: 12px;
+    color: #fff;
+    background: linear-gradient(135deg, #6948e8, #1a99f7);
+    border-radius: 11px;
+    place-items: center;
+}
+
+.pinax-register-credential p {
+    margin: 0;
+}
+
+.pinax-register-credential strong,
+.pinax-register-credential small {
+    display: block;
+}
+
+.pinax-register-credential strong {
+    color: #fff;
+    font-size: 0.84rem;
+}
+
+.pinax-register-credential small {
+    margin-top: 2px;
+    color: #9fa8c4;
+    font-size: 0.7rem;
+}
+
+.pinax-register-panel {
+    justify-content: flex-start;
+    padding: 38px 52px;
+}
+
+.pinax-register-header {
+    margin-bottom: 21px;
+}
+
+.pinax-register-form .form-group {
+    margin-bottom: 14px;
+}
+
+.pinax-register-help {
+    display: block;
+    margin-top: 6px;
+    color: #8a90a4;
+    font-size: 0.72rem;
+}
+
+.pinax-register-rules {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px 12px;
+    margin: 3px 0 16px;
+    padding: 0;
+    list-style: none;
+}
+
+.pinax-register-rules li {
+    display: flex;
+    align-items: center;
+    color: #8a90a4;
+    font-size: 0.7rem;
+    transition:
+        color 160ms ease,
+        transform 160ms ease;
+}
+
+.pinax-register-rules i {
+    margin-right: 7px;
+    color: #d7dae4;
+    font-size: 0.36rem;
+    transition:
+        color 160ms ease,
+        box-shadow 160ms ease;
+}
+
+.pinax-register-rules li.is-valid {
+    color: #23875d;
+    transform: translateX(2px);
+}
+
+.pinax-register-rules li.is-valid i {
+    color: #2cb67d;
+    text-shadow: 0 0 8px rgba(44, 182, 125, 0.4);
+}
+
+.pinax-register-match {
+    display: block;
+    min-height: 18px;
+    margin-top: 6px;
+    font-size: 0.72rem;
+}
+
+.pinax-register-match.is-valid {
+    color: #23875d;
+}
+
+.pinax-register-match.is-invalid {
+    color: #c24155;
+}
+
+.pinax-register-back {
+    display: inline-flex;
+    align-items: center;
+    align-self: center;
+    margin-top: 17px;
+    color: #5f6680;
+    font-size: 0.78rem;
+    font-weight: 700;
+    transition:
+        color 160ms ease,
+        transform 160ms ease;
+}
+
+.pinax-register-back i {
+    margin-right: 8px;
+}
+
+.pinax-register-back:hover,
+.pinax-register-back:focus {
+    color: #1a99f7;
+    text-decoration: none;
+    transform: translateX(-2px);
+    outline: none;
+}
+
+.pinax-register-security {
+    margin-top: 16px;
+    padding-top: 15px;
+}
+
+@media (max-width: 850px) {
+    .pinax-register-shell {
+        min-height: 0;
+    }
+
+    .pinax-register-visual {
+        min-height: 330px;
+    }
+
+    .pinax-register-credential {
+        display: none;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .pinax-register-visual {
+        min-height: 235px;
+    }
+
+    .pinax-register-panel {
+        padding: 31px 25px;
+    }
+
+    .pinax-register-rules {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pinax-register-rules li,
+    .pinax-register-rules i,
+    .pinax-register-back {
+        transition: none;
+    }
+}

@@ -52,7 +52,6 @@
                     <i class="fas fa-plus" aria-hidden="true"></i>
                     Crear Asiento
                 </a>
-                <span class="asientos-hero__hint">Flujo operativo y trazabilidad en un solo panel</span>
             </div>
         </div>
     </section>
@@ -170,7 +169,7 @@
 
                     <a href="{{ route('asientos.index') }}" class="btn btn-outline-secondary asientos-clear-btn">
                         <i class="fas fa-eraser"></i>
-                        Limpiar
+                        Limpiar Filtros
                     </a>
                 </div>
             </form>

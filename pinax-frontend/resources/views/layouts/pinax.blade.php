@@ -14,10 +14,20 @@
         ?? data_get($usuarioPinax, 'NAME')
         ?? 'Usuario';
 
-    $rolUsuario = data_get($usuarioPinax, 'role')
+    $rolTecnico = data_get($usuarioPinax, 'role')
         ?? data_get($usuarioPinax, 'tipo_usuario')
         ?? data_get($usuarioPinax, 'TIP_USER')
-        ?? 'Usuario';
+        ?? 'usuario';
+
+    /*
+    * Traducimos el valor técnico almacenado en la base de datos
+    * para mostrar una etiqueta comprensible en la interfaz.
+    */
+    $rolUsuario = match (strtolower($rolTecnico)) {
+        'administrator' => 'Administrador',
+        'outsourcing' => 'Outsourcing',
+        default => 'Usuario',
+};
 @endphp
 
 {{-- Elementos del lado derecho de la barra superior de AdminLTE. --}}

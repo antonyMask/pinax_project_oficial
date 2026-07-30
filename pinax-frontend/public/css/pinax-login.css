@@ -285,6 +285,60 @@
     border-radius: 11px;
 }
 
+/* Acceso secundario al registro público. */
+.pinax-login-register {
+    margin-top: 18px;
+    padding-top: 18px;
+    text-align: center;
+    border-top: 1px solid #eceef4;
+}
+
+.pinax-login-register > span {
+    display: block;
+    margin-bottom: 9px;
+    color: #8c91a3;
+    font-size: 0.75rem;
+}
+
+.pinax-login-register-button {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 46px;
+    padding: 0 15px;
+    color: #5742b7;
+    font-size: 0.82rem;
+    font-weight: 700;
+    background: #f8f7ff;
+    border: 1px solid #ded9fa;
+    border-radius: 11px;
+    transition:
+        color 180ms ease,
+        background 180ms ease,
+        border-color 180ms ease,
+        transform 180ms ease;
+}
+
+.pinax-login-register-button span {
+    flex: 1;
+}
+
+.pinax-login-register-button:hover,
+.pinax-login-register-button:focus {
+    color: #fff;
+    text-decoration: none;
+    background: linear-gradient(100deg, #6948e8, #1a99f7);
+    border-color: transparent;
+    transform: translateY(-1px);
+    outline: none;
+}
+
+.pinax-login-register + .pinax-login-security {
+    margin-top: 17px;
+    padding-top: 0;
+    border-top: 0;
+}
+
 @media (max-width: 850px) {
     .pinax-login-shell {
         grid-template-columns: 1fr;
@@ -339,7 +393,8 @@
 
 @media (prefers-reduced-motion: reduce) {
     .pinax-login-button,
-    .pinax-login-input .form-control {
+    .pinax-login-input .form-control,
+    .pinax-login-register-button {
         transition: none;
     }
 }

@@ -615,7 +615,7 @@
                                 aria-hidden="true"
                             ></i>
 
-                            Consultar
+                            Buscar
                         </button>
 
                         <a

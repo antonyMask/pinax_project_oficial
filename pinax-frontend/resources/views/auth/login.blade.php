@@ -142,6 +142,20 @@
                 </button>
             </form>
 
+            {{-- Acceso público al formulario de creación de cuenta. --}}
+            <div class="pinax-login-register">
+                <span>¿Aún no tienes acceso?</span>
+
+                <a
+                    href="{{ route('register') }}"
+                    class="pinax-login-register-button"
+                >
+                    <i class="fas fa-user-plus" aria-hidden="true"></i>
+                    <span>Crear una cuenta</span>
+                    <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                </a>
+            </div>
+
             <div class="pinax-login-security">
                 <i class="fas fa-shield-alt"></i>
 

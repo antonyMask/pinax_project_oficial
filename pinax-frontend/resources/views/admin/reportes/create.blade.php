@@ -1,196 +1,246 @@
+{{-- resources/views/admin/reportes/create.blade.php --}}
+
 @extends('layouts.pinax')
 
-@section('title', 'Nuevo Reporte')
-@section('header', 'Generar Nuevo Reporte')
-@section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('reportes.index') }}">Reportes</a></li>
-    <li class="breadcrumb-item active">Crear</li>
-@endsection
+@section('title', 'Generar Reporte Financiero')
+
+@section('css')
+    <link rel="stylesheet" href="{{ asset('css/reportes.css') }}">
+@stop
+
+@section('content_header')
+@stop
 
 @section('content')
-<div class="card card-primary">
-    <div class="card-header">
-        <h3 class="card-title">
-            <i class="fas fa-file-invoice"></i> Generar Reporte Financiero
-        </h3>
-    </div>
-    <form action="{{ route('reportes.store') }}" method="POST">
-        @csrf
-        <div class="card-body">
-            @if(session('error'))
-                <div class="alert alert-danger">
-                    <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
-                </div>
-            @endif
-
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="cod_periodo">Período Contable *</label>
-                        <input type="number" 
-                               class="form-control @error('cod_periodo') is-invalid @enderror" 
-                               id="cod_periodo" 
-                               name="cod_periodo" 
-                               placeholder="Ej: 202401" 
-                               value="{{ old('cod_periodo') }}" 
-                               required>
-                        @error('cod_periodo')
-                            <span class="invalid-feedback">{{ $message }}</span>
-                        @enderror
-                        <small class="form-text text-muted">Código del período contable (ej: 202401 para enero 2024).</small>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="tip_reporte">Tipo de Reporte *</label>
-                        <select class="form-control @error('tip_reporte') is-invalid @enderror" 
-                                id="tip_reporte" 
-                                name="tip_reporte" 
-                                required>
-                            <option value="">Selecciona un tipo...</option>
-                            <option value="balance_general" {{ old('tip_reporte') == 'balance_general' ? 'selected' : '' }}>
-                                Balance General
-                            </option>
-                            <option value="estado_resultados" {{ old('tip_reporte') == 'estado_resultados' ? 'selected' : '' }}>
-                                Estado de Resultados
-                            </option>
-                        </select>
-                        @error('tip_reporte')
-                            <span class="invalid-feedback">{{ $message }}</span>
-                        @enderror
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="calcular_automaticamente">Cálculo Automático</label>
-                        <select class="form-control @error('calcular_automaticamente') is-invalid @enderror" 
-                                id="calcular_automaticamente" 
-                                name="calcular_automaticamente" 
-                                required>
-                            <option value="1" {{ old('calcular_automaticamente') != '0' ? 'selected' : '' }}>
-                                Sí (calcular automáticamente)
-                            </option>
-                            <option value="0" {{ old('calcular_automaticamente') == '0' ? 'selected' : '' }}>
-                                No (ingresar manualmente)
-                            </option>
-                        </select>
-                        @error('calcular_automaticamente')
-                            <span class="invalid-feedback">{{ $message }}</span>
-                        @enderror
-                    </div>
-                </div>
-                <div class="col-md-6" id="camposManuales" style="display: none;">
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle"></i> 
-                        <strong>Ingreso manual:</strong> Completa los siguientes campos.
-                    </div>
-                </div>
-            </div>
-
-            <!-- Campos manuales (ocultos por defecto) -->
-            <div id="camposManualesContainer" style="display: none;">
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="tot_activo">Total Activo</label>
-                            <input type="number" 
-                                   step="0.01" 
-                                   class="form-control @error('tot_activo') is-invalid @enderror" 
-                                   id="tot_activo" 
-                                   name="tot_activo" 
-                                   placeholder="0.00" 
-                                   value="{{ old('tot_activo') }}">
-                            @error('tot_activo')
-                                <span class="invalid-feedback">{{ $message }}</span>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="tot_pasivo">Total Pasivo</label>
-                            <input type="number" 
-                                   step="0.01" 
-                                   class="form-control @error('tot_pasivo') is-invalid @enderror" 
-                                   id="tot_pasivo" 
-                                   name="tot_pasivo" 
-                                   placeholder="0.00" 
-                                   value="{{ old('tot_pasivo') }}">
-                            @error('tot_pasivo')
-                                <span class="invalid-feedback">{{ $message }}</span>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="tot_patrimonio">Total Patrimonio</label>
-                            <input type="number" 
-                                   step="0.01" 
-                                   class="form-control @error('tot_patrimonio') is-invalid @enderror" 
-                                   id="tot_patrimonio" 
-                                   name="tot_patrimonio" 
-                                   placeholder="0.00" 
-                                   value="{{ old('tot_patrimonio') }}">
-                            @error('tot_patrimonio')
-                                <span class="invalid-feedback">{{ $message }}</span>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="mon_utilidad_perdida">Utilidad/Pérdida</label>
-                            <input type="number" 
-                                   step="0.01" 
-                                   class="form-control @error('mon_utilidad_perdida') is-invalid @enderror" 
-                                   id="mon_utilidad_perdida" 
-                                   name="mon_utilidad_perdida" 
-                                   placeholder="0.00" 
-                                   value="{{ old('mon_utilidad_perdida') }}">
-                            @error('mon_utilidad_perdida')
-                                <span class="invalid-feedback">{{ $message }}</span>
-                            @enderror
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="alert alert-warning mt-3">
-                <i class="fas fa-exclamation-triangle"></i>
-                <strong>Nota:</strong> Los reportes generados serán verificados automáticamente para garantizar la integridad contable.
-            </div>
-        </div>
-        <div class="card-footer">
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-save"></i> Generar Reporte
-            </button>
-            <a href="{{ route('reportes.index') }}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Cancelar
+    <header class="reports-page-heading">
+        <div>
+            <a class="reports-back-link" href="{{ route('reportes.index') }}">
+                <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                Volver al historial
             </a>
+
+            <span class="reports-eyebrow">
+                Nueva emisión
+            </span>
+
+            <h1>Generar reporte financiero</h1>
+
+            <p>
+                Selecciona el período y el tipo de informe. Pinax calculará
+                los importes desde los saldos mayorizados.
+            </p>
         </div>
+
+        <span class="reports-page-heading__icon" aria-hidden="true">
+            <i class="fas fa-file-invoice-dollar"></i>
+        </span>
+    </header>
+
+    @if ($errors->any())
+        <div class="reports-alert reports-alert--danger" role="alert">
+            <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+
+            <div>
+                <strong>Revisa la información ingresada</strong>
+                <span>
+                    {{ $errors->first('api') ?: $errors->first() }}
+                </span>
+            </div>
+        </div>
+    @endif
+
+    @if ($errorApi)
+        <div class="reports-alert reports-alert--warning" role="alert">
+            <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+
+            <div>
+                <strong>Los períodos no pudieron cargarse</strong>
+                <span>
+                    {{ $errorApi }}
+                    Puedes escribir el código del período si ya lo conoces.
+                </span>
+            </div>
+        </div>
+    @endif
+
+    <form action="{{ route('reportes.store') }}" method="POST" class="reports-create-layout">
+        @csrf
+
+        <section class="reports-panel reports-create-panel">
+            <div class="reports-panel__heading">
+                <div>
+                    <span class="reports-panel__kicker">
+                        Datos de generación
+                    </span>
+                    <h2>Configura el informe</h2>
+                </div>
+
+                <span class="reports-panel__step">
+                    1
+                </span>
+            </div>
+
+            <div class="reports-field">
+                <label for="cod_periodo">
+                    Período contable
+                    <span aria-hidden="true">*</span>
+                </label>
+
+                @if (count($periodos) > 0)
+                    <select id="cod_periodo" name="cod_periodo"
+                        class="form-control @error('cod_periodo') is-invalid @enderror" required>
+                        <option value="">
+                            Selecciona un período
+                        </option>
+
+                        @foreach ($periodos as $periodo)
+                            @php
+                                $codPeriodo = data_get($periodo, 'cod_periodo');
+
+                                $estadoPeriodo = data_get($periodo, 'ind_estado');
+                            @endphp
+
+                            <option value="{{ $codPeriodo }}" @selected((string) old('cod_periodo') === (string) $codPeriodo)>
+                                {{ data_get($periodo, 'nom_periodo', 'Período ' . $codPeriodo) }}
+                                @if ($estadoPeriodo)
+                                    — {{ ucfirst($estadoPeriodo) }}
+                                @endif
+                            </option>
+                        @endforeach
+                    </select>
+                @else
+                    <input id="cod_periodo" name="cod_periodo" type="number" min="1"
+                        step="1" inputmode="numeric" value="{{ old('cod_periodo') }}"
+                        class="form-control @error('cod_periodo') is-invalid @enderror"
+                        placeholder="Ejemplo: 1" required>
+                @endif
+
+                @error('cod_periodo')
+                    <span class="invalid-feedback">
+                        {{ $message }}
+                    </span>
+                @enderror
+
+                <small>
+                    El período debe tener saldos disponibles en Mayorización.
+                </small>
+            </div>
+
+            <fieldset class="reports-type-selector">
+                <legend>
+                    Tipo de reporte
+                    <span aria-hidden="true">*</span>
+                </legend>
+
+                <div class="reports-type-selector__grid">
+                    <label class="reports-type-option" data-report-type-option>
+                        <input type="radio" name="tip_reporte" value="balance_general"
+                            @checked(old('tip_reporte', 'balance_general') === 'balance_general') required>
+
+                        <span class="reports-type-option__icon">
+                            <i class="fas fa-balance-scale" aria-hidden="true"></i>
+                        </span>
+
+                        <span>
+                            <strong>Balance General</strong>
+                            <small>
+                                Activo, Pasivo y Patrimonio a una fecha.
+                            </small>
+                        </span>
+                    </label>
+
+                    <label class="reports-type-option" data-report-type-option>
+                        <input type="radio" name="tip_reporte" value="estado_resultados"
+                            @checked(old('tip_reporte') === 'estado_resultados') required>
+
+                        <span class="reports-type-option__icon">
+                            <i class="fas fa-chart-line" aria-hidden="true"></i>
+                        </span>
+
+                        <span>
+                            <strong>Estado de Resultados</strong>
+                            <small>
+                                Ingresos, gastos y resultado del período.
+                            </small>
+                        </span>
+                    </label>
+                </div>
+
+                @error('tip_reporte')
+                    <span class="reports-field-error">
+                        {{ $message }}
+                    </span>
+                @enderror
+            </fieldset>
+
+            <div class="reports-create-panel__footer">
+                <a class="reports-button reports-button--ghost" href="{{ route('reportes.index') }}">
+                    Cancelar
+                </a>
+
+                <button type="submit" class="reports-button reports-button--primary">
+                    <i class="fas fa-cogs" aria-hidden="true"></i>
+                    Generar reporte
+                </button>
+            </div>
+        </section>
+
+        <aside class="reports-process-card">
+            <span class="reports-panel__kicker">
+                Cálculo automático
+            </span>
+
+            <h2>Los totales no se escriben.</h2>
+
+            <p>
+                La base de datos calcula cada importe desde Mayorización
+                y construye la cabecera junto con sus líneas de detalle.
+            </p>
+
+            <ol class="reports-process-list">
+                <li>
+                    <span>01</span>
+                    <div>
+                        <strong>Consulta saldos</strong>
+                        <small>
+                            Lee las cuentas activas del período.
+                        </small>
+                    </div>
+                </li>
+
+                <li>
+                    <span>02</span>
+                    <div>
+                        <strong>Calcula totales</strong>
+                        <small>
+                            Aplica la naturaleza de cada cuenta.
+                        </small>
+                    </div>
+                </li>
+
+                <li>
+                    <span>03</span>
+                    <div>
+                        <strong>Verifica el informe</strong>
+                        <small>
+                            Devuelve validación y detalle auditable.
+                        </small>
+                    </div>
+                </li>
+            </ol>
+
+            <div class="reports-process-card__note">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+
+                <span>
+                    Activo, Pasivo, Patrimonio y Utilidad permanecen
+                    protegidos contra edición manual.
+                </span>
+            </div>
+        </aside>
     </form>
-</div>
 @endsection
 
-@push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const calcularAuto = document.getElementById('calcular_automaticamente');
-        const camposManuales = document.getElementById('camposManualesContainer');
-
-        calcularAuto.addEventListener('change', function() {
-            if (this.value === '0') {
-                camposManuales.style.display = 'block';
-            } else {
-                camposManuales.style.display = 'none';
-            }
-        });
-
-        // Verificar si debe mostrar campos manuales al cargar
-        if (calcularAuto.value === '0') {
-            camposManuales.style.display = 'block';
-        }
-    });
-</script>
-@endpush
+@section('js')
+    <script src="{{ asset('js/reportes.js') }}"></script>
+@stop

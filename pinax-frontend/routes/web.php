@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AsientosController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RegistroController;
 use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MayorizacionController;
@@ -32,6 +33,20 @@ Route::post(
     [AuthController::class, 'login']
 )
     ->name('login.authenticate');
+    
+    // Muestra el formulario público para crear una cuenta estándar.
+Route::get(
+    '/registro',
+    [RegistroController::class, 'show']
+)
+    ->name('register');
+
+// Envía el formulario de registro hacia la API de Pinax.
+Route::post(
+    '/registro',
+    [RegistroController::class, 'store']
+)
+    ->name('register.store');
 
 /*
 |--------------------------------------------------------------------------
@@ -46,7 +61,6 @@ Route::post(
 Route::middleware(EnsurePinaxAuthenticated::class)->group(function () {
     /*
      * La página raíz no posee una vista propia.
-     *
      * Cuando un usuario visita "/", Laravel lo redirige al dashboard.
      */
     Route::get('/', function () {

@@ -248,12 +248,44 @@ const obtenerReportesFinancieros = async (req, res) => {
             return Math.abs(activo - (pasivo + patrimonio)) <= 0.01;
         };
 
-        // Filtrar balances descuadrados
-        const balancesDescuadrados = cabecera.filter((reporte) => {
-            const tipoReporte = reporte.tip_reporte || reporte.tp_reporte;
-            return tipoReporte === 'balance_general' &&
-                   !verificarBalanceCuadrado(reporte);
+        /*
+        * Solo se consideran para la alerta los balances vigentes.
+        * Los anulados permanecen visibles por trazabilidad,
+        * pero ya no participan en la validación contable global.
+        */
+        const balancesGeneralesVigentes = cabecera.filter((reporte) => {
+            const tipoReporte =
+                reporte.tip_reporte || reporte.tp_reporte;
+
+            const estadoReporte =
+                String(reporte.ind_estado || '').toLowerCase();
+
+            return tipoReporte === 'balance_general'
+                && estadoReporte !== 'anulado';
         });
+
+/*
+ * Identifica únicamente los balances vigentes
+ * que incumplen la ecuación contable.
+ */
+const balancesDescuadrados = balancesGeneralesVigentes.filter(
+    (reporte) => !verificarBalanceCuadrado(reporte)
+);
+
+if (balancesDescuadrados.length > 0) {
+    balanceValido = false;
+    mensajeValidacion =
+        'Uno o más balances generales vigentes presentan inconsistencias contables';
+} else if (balancesGeneralesVigentes.length > 0) {
+    mensajeValidacion =
+        'Todos los balances generales vigentes están cuadrados';
+} else {
+    /*
+     * No debe mostrarse una validación positiva si no existen
+     * balances vigentes dentro de la consulta realizada.
+     */
+    mensajeValidacion = null;
+}
 
         if (balancesDescuadrados.length > 0) {
             balanceValido = false;
